@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYT News Stories</title>
+    <link rel="stylesheet" href="css/nyt.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>New York Times News Stories</h1>
+            <ul class="category-list">
+                <li>Home</li>
+                <li>Arts</li>
+                <li>Business</li>
+                <li>Dining</li>
+                <li>Fashion</li>
+                <li>Health</li>
+                <li>Opinion</li>
+                <li>Politics</li>
+                <li>Real Estate</li>
+                <li>Science</li>
+                <li>Sports</li>
+                <li>Technology</li>
+                <li>World</li>
+            </ul>
+            <div class="controls">
+                <select id="sectionSelect" aria-label="Select news section">
+                    <option value="home">Home</option>
+                    <option value="arts">Arts</option>
+                    <option value="business">Business</option>
+                    <option value="dining">Dining</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="health">Health Magazine</option>
+                    <option value="opinion/national">National Opinion</option>
+                    <option value="politics">Politics</option>
+                    <option value="realestate">Real Estate</option>
+                    <option value="science">Science</option>
+                    <option value="sports">Sports</option>
+                    <option value="technology">Technology</option>
+                    <option value="world">World</option>
+                </select>
+                <button id="refreshButton" aria-label="Refresh stories">Refresh Stories</button>
+            </div>
+        </header>
+        <main>
+            <div id="storiesContainer" class="stories-grid"></div>
+        </main>
+    </div>
+    <script src="js/nyt.js"></script>
+</body>
+
+</html>
