@@ -22,36 +22,42 @@ body {
     font-family: "Georgia", serif;
     line-height: 1.6;
     color: var(--primary-color);
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 .container {
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0 1rem;
+}
+
+main .container {
     background-color: var(--secondary-color);
-    flex: 1;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 #storiesContainer {
-    margin-top: 2rem;
+    margin: 0;
 }
 
 header {
     text-align: center;
     background-color: var(--primary-color);
-    width: 100vw;
-    padding: 1rem 0 0 0;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    position: relative;
+    width: 100%;
+    padding: 0;
+    margin: 0;
     left: 0;
     right: 0;
+    padding-top: 1rem;
+    position: relative;
 }
 
 h1 {
@@ -72,7 +78,7 @@ h1 {
     justify-content: center;
     gap: 1.5rem;
     padding: 0.75rem 0;
-    margin: 0.75rem 0 0 0;
+    margin: 0;
     border-top: 1px solid var(--secondary-color);
     flex-wrap: wrap;
     background-color: var(--primary-color);
@@ -89,12 +95,11 @@ h1 {
 
 .category-list li:hover {
     opacity: 0.8;
-    text-decoration: underline;
 }
 
 .controls-card {
     border: 2px solid var(--primary-color);
-    background-color: var(--gray-medium);
+    background-color: var(--primary-color);
     display: flex;
     flex-direction: column;
     border-radius: 0 !important;
@@ -153,8 +158,8 @@ button {
 }
 
 select:hover, button:hover {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
+    background-color: var(--gray-light);
+    /* color: var(--secondary-color); */
 }
 
 select {
@@ -167,8 +172,9 @@ button {
 }
 
 button:hover {
-    background-color: var(--gray-medium);
+    background-color: var(--primary-color);
     color: var(--secondary-color);
+    border-color: var(--secondary-color);
 }
 
 .card {
@@ -199,32 +205,55 @@ button:hover {
     margin-bottom: 0.5rem;
 }
 
-/* Card types and their specific styles */
-/* 1. Double-wide card */
-.col-md-8 .card-title {
-    font-size: 1.75rem;
+/* Card Layout System 
+   Using a systematic approach for card sizes:
+   - Large (col-md-8): Featured stories
+   - Medium (col-md-4): Regular stories
+   - Small (col-md-3): Category cards
+*/
+
+/* Card title sizes */
+:root {
+    --title-large: 1.75rem;
+    --title-medium: 1.5rem;
+    --title-small: 1.35rem;
+    --img-height-large: 400px;
+    --img-height-medium: 240px;
+    --img-height-small: 180px;
 }
 
-.col-md-8 .card-img-top {
-    height: 400px;
+/* Large cards (Featured stories) */
+.col-md-8 {
+    .card-title {
+        font-size: var(--title-large);
+    }
+
+    .card-img-top {
+        height: var(--img-height-large);
+    }
 }
 
-/* 2. Regular card */
-.col-md-4 .card-title {
-    font-size: 1.5rem;
+/* Medium cards (Regular stories) */
+.col-md-4 {
+    .card-title {
+        font-size: var(--title-medium);
+    }
+
+    .card-img-top {
+        height: var(--img-height-medium);
+    }
 }
 
-.col-md-4 .card-img-top {
-    height: 240px;
-}
+/* Small cards (Category cards) */
+.col-md-3 {
+    .card-title {
+        font-size: var(--title-small);
+        line-height: 1.3;
+    }
 
-/* 3. Small card */
-.small-card .card-title {
-    font-size: 1.25rem;
-}
-
-.small-card .card-img-top {
-    height: 180px;
+    .card-img-top {
+        height: var(--img-height-small);
+    }
 }
 
 /* Common card styles */
@@ -295,6 +324,12 @@ h2.border-bottom {
     border-bottom: 2px solid var(--primary-color);
     text-align: left;
     cursor: pointer;
+    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+}
+
+.section-header:hover {
+    color: var(--gray-medium);
+    border-bottom-color: var(--gray-medium);
 }
 
 /* Spacing for all card types */
@@ -302,160 +337,141 @@ h2.border-bottom {
     margin-bottom: 1.5rem;
 }
 
+/* Responsive Breakpoints */
+:root {
+    --breakpoint-xl: 1199px;
+    /* Large desktop */
+    --breakpoint-lg: 991px;
+    /* Desktop */
+    --breakpoint-md: 767px;
+    /* Tablet */
+    --breakpoint-sm: 575px;
+    /* Mobile */
+}
+
 /* Large devices (desktop, 992px to 1199px) */
-@media (max-width: 1199px) {
+@media (max-width: var(--breakpoint-xl)) {
+
+    /* Layout adjustments */
     .container {
         padding: 1.5rem;
     }
 
-    /* Hide original nav and controls */
-    .category-list {
-        display: none;
-    }
-
-    .controls-card {
-        display: none;
-    }
-
-    /* Add new controls to header */
     header {
         padding: 1rem 0;
     }
 
-    /* Add black bar for controls */
+    /* Navigation changes */
+    .category-list, .controls-card {
+        display: none;
+    }
+
+    /* Mobile controls */
     .mobile-controls {
         display: flex;
         justify-content: flex-end;
         background-color: var(--primary-color);
         padding: 0.5rem 2rem;
         border-top: 1px solid var(--secondary-color);
+
+        select, button {
+            background-color: transparent;
+            border: none;
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.25rem 1rem;
+            min-width: 150px;
+            height: auto;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        }
     }
 
-    .mobile-controls select,
-    .mobile-controls button {
-        background-color: transparent;
-        border: none;
-        color: var(--secondary-color);
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding: 0.25rem 1rem;
-        min-width: 150px;
-        height: auto;
-    }
-
-    .mobile-controls button {
-        font-weight: normal;
-    }
-
-    .mobile-controls select {
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
-    }
-
-    /* Slightly reduce image heights */
-    .col-md-8 .card-img-top {
-        height: 350px;
-    }
-
-    .col-md-4 .card-img-top {
-        height: 220px;
-    }
-
-    .small-card .card-img-top {
-        height: 160px;
+    /* Card adjustments */
+    :root {
+        --img-height-large: 350px;
+        --img-height-medium: 220px;
+        --img-height-small: 160px;
     }
 }
 
 /* Medium devices (tablets, 768px to 991px) */
-@media (max-width: 991px) {
+@media (max-width: var(--breakpoint-lg)) {
+
+    /* Layout */
     .container {
         padding: 1rem;
-    }
-
-    /* Double-wide becomes full width */
-    .col-md-8 {
-        width: 100%;
-    }
-
-    /* Regular cards become half width */
-    .col-md-4 {
-        width: 50%;
-    }
-
-    /* Small cards become half width */
-    .small-card {
-        width: 50%;
-    }
-
-    /* Adjust font sizes */
-    .col-md-8 .card-title {
-        font-size: 1.5rem;
-    }
-
-    .col-md-4 .card-title {
-        font-size: 1.25rem;
-    }
-
-    /* Adjust image heights */
-    .col-md-8 .card-img-top {
-        height: 300px;
-    }
-
-    .col-md-4 .card-img-top {
-        height: 200px;
-    }
-
-    .small-card .card-img-top {
-        height: 150px;
     }
 
     .card-body {
         padding: 1.25rem;
     }
-}
 
-/* Small devices (landscape phones, 576px to 767px) */
-@media (max-width: 767px) {
-    h1 {
-        font-size: 2.5rem;
-    }
-
-    .container {
-        padding: 0.75rem;
-    }
-
-    /* Double-wide stays full width */
+    /* Card widths */
     .col-md-8 {
         width: 100%;
     }
 
-    /* Regular cards stay half width */
-    .col-md-4 {
+    .col-md-4, .small-card {
         width: 50%;
     }
 
-    /* Small cards become full width */
-    .small-card {
-        width: 100%;
+    /* Typography */
+    :root {
+        --title-large: 1.5rem;
+        --title-medium: 1.25rem;
     }
 
-    /* Further reduce image heights */
-    .col-md-8 .card-img-top {
-        height: 250px;
+    /* Images */
+    :root {
+        --img-height-large: 300px;
+        --img-height-medium: 200px;
+        --img-height-small: 150px;
+    }
+}
+
+/* Small devices (landscape phones, 576px to 767px) */
+@media (max-width: var(--breakpoint-md)) {
+
+    /* Typography */
+    h1 {
+        font-size: 2.5rem;
     }
 
-    .col-md-4 .card-img-top {
-        height: 180px;
-    }
-
-    .small-card .card-img-top {
-        height: 200px;
+    /* Layout */
+    .container {
+        padding: 0.75rem;
     }
 
     .card-body {
         padding: 1rem;
     }
 
+    /* Card widths */
+    .col-md-8 {
+        width: 100%;
+    }
+
+    .col-md-4 {
+        width: 50%;
+    }
+
+    .small-card {
+        width: 100%;
+    }
+
+    /* Images */
+    :root {
+        --img-height-large: 250px;
+        --img-height-medium: 180px;
+        --img-height-small: 200px;
+    }
+
+    /* Controls */
     .controls {
         flex-direction: column;
         align-items: center;
@@ -468,33 +484,30 @@ h2.border-bottom {
 }
 
 /* Extra small devices (portrait phones, less than 576px) */
-@media (max-width: 575px) {
+@media (max-width: var(--breakpoint-sm)) {
+
+    /* Typography */
     h1 {
         font-size: 2rem;
     }
 
+    /* Layout */
     .container {
         padding: 0.5rem;
     }
 
-    /* All cards become full width */
+    /* Card widths */
     .col-md-8,
     .col-md-4,
     .small-card {
         width: 100%;
     }
 
-    /* Adjust image heights for mobile */
-    .col-md-8 .card-img-top {
-        height: 200px;
-    }
-
-    .col-md-4 .card-img-top {
-        height: 200px;
-    }
-
-    .small-card .card-img-top {
-        height: 180px;
+    /* Images */
+    :root {
+        --img-height-large: 200px;
+        --img-height-medium: 200px;
+        --img-height-small: 180px;
     }
 
     /* Adjust font sizes for mobile */
@@ -517,4 +530,38 @@ h2.border-bottom {
     .card-body {
         padding: 1rem;
     }
+}
+
+/* Footer Styles */
+.site-footer {
+    background-color: var(--primary-color);
+    width: 100%;
+    margin: 0;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.footer-nav {
+    margin: 0;
+    border-top: 1px solid var(--gray-medium);
+    border-bottom: 1px solid var(--gray-medium);
+}
+
+.footer-nav li {
+    color: var(--secondary-color);
+}
+
+.site-footer .copyright {
+    color: var(--gray-light);
+    font-size: 0.9rem;
+    margin: 0;
+    padding: 0.5rem 0;
+    padding: 1rem 0 0 0;
+    text-align: center;
+}
+
+.main-wrapper {
+    background-color: var(--secondary-color);
+    width: 100%;
+    padding: 2rem 0;
 }
