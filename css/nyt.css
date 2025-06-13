@@ -1,7 +1,7 @@
 :root {
     --primary-color: #000000;
     --secondary-color: #ffffff;
-    --gray-light: #f4f4f4;
+    --gray-light: #ebeaea;
     --gray-medium: #666666;
     --border-color: #e2e2e2;
 }
@@ -12,28 +12,46 @@
     box-sizing: border-box;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Merriweather:wght@400;700&display=swap');
+
+html {
+    background-color: var(--primary-color);
+}
 
 body {
     font-family: "Georgia", serif;
     line-height: 1.6;
     color: var(--primary-color);
     background-color: var(--secondary-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
 }
 
 .container {
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     padding: 2rem;
+    background-color: var(--secondary-color);
+    flex: 1;
+}
+
+#storiesContainer {
+    margin-top: 2rem;
 }
 
 header {
     text-align: center;
     background-color: var(--primary-color);
+    width: 100vw;
+    padding: 1rem 0 0 0;
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
-    width: 100vw;
-    padding: 1.5rem 0 0 0;
+    position: relative;
+    left: 0;
+    right: 0;
 }
 
 h1 {
@@ -48,55 +66,95 @@ h1 {
     margin: 0 0 1rem 0;
 }
 
-h1::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--secondary-color);
-}
-
 .category-list {
     list-style: none;
     display: flex;
     justify-content: center;
     gap: 1.5rem;
-    padding: 1rem 0;
-    margin: 1rem 0 0 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.75rem 0;
+    margin: 0.75rem 0 0 0;
+    border-top: 1px solid var(--secondary-color);
     flex-wrap: wrap;
+    background-color: var(--primary-color);
 }
 
 .category-list li {
     color: var(--secondary-color);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     cursor: pointer;
     transition: opacity 0.3s;
 }
 
 .category-list li:hover {
     opacity: 0.8;
+    text-decoration: underline;
 }
 
-.controls {
+.controls-card {
+    border: 2px solid var(--primary-color);
+    background-color: var(--gray-medium);
     display: flex;
-    justify-content: center;
-    gap: 1.5rem;
+    flex-direction: column;
+    border-radius: 0 !important;
+}
+
+.controls-title {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     padding: 1rem;
-    background-color: rgba(255, 255, 255, 0.1);
     margin: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.controls-content {
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-grow: 0;
+    justify-content: flex-start;
+}
+
+.mobile-controls {
+    display: none;
 }
 
 select, button {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--secondary-color);
+    color: var(--primary-color);
     border: 2px solid var(--primary-color);
-    border-radius: 4px;
-    background-color: var(--secondary-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-radius: 0 !important;
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em;
+    padding-right: 2.5rem;
+}
+
+button {
+    font-weight: bold;
+}
+
+select:hover, button:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
 }
 
 select {
@@ -109,101 +167,293 @@ button {
 }
 
 button:hover {
-    background-color: var(--accent-color);
+    background-color: var(--gray-medium);
     color: var(--secondary-color);
 }
 
-.stories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.story-card {
-    background-color: var(--secondary-color);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-    transition: all 0.3s ease;
+.card {
     position: relative;
+    background: var(--secondary-color);
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    transition: background 0.3s ease;
 }
 
-.story-card:hover {
-    border-color: var(--primary-color);
+.card:hover {
+    background: linear-gradient(to bottom,
+            var(--gray-light) 0%,
+            var(--gray-light) 50%,
+            var(--secondary-color) 100%);
 }
 
-.story-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background-color: var(--primary-color);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-    transform-origin: center;
+.card:hover .card-title a {
+    text-decoration: underline;
 }
 
-.story-card:hover::after {
-    transform: scaleX(1);
-}
-
-.story-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.story-content {
-    padding: 1.5rem;
-}
-
-.story-section {
+.card .small {
+    color: var(--primary-color);
+    font-size: 0.75rem;
     text-transform: uppercase;
-    font-size: 0.8rem;
-    color: var(--accent-color);
+    letter-spacing: 1px;
     margin-bottom: 0.5rem;
 }
 
-.story-title {
+/* Card types and their specific styles */
+/* 1. Double-wide card */
+.col-md-8 .card-title {
+    font-size: 1.75rem;
+}
+
+.col-md-8 .card-img-top {
+    height: 400px;
+}
+
+/* 2. Regular card */
+.col-md-4 .card-title {
+    font-size: 1.5rem;
+}
+
+.col-md-4 .card-img-top {
+    height: 240px;
+}
+
+/* 3. Small card */
+.small-card .card-title {
     font-size: 1.25rem;
+}
+
+.small-card .card-img-top {
+    height: 180px;
+}
+
+/* Common card styles */
+.card-title {
+    font-family: 'Merriweather', serif;
+}
+
+.card-img-top {
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    opacity: 0.8;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
     margin-bottom: 1rem;
     line-height: 1.4;
 }
 
-.story-title a {
+.card-title a {
     color: var(--primary-color);
     text-decoration: none;
 }
 
-.story-title a:hover {
-    color: var(--accent-color);
+.card-text {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
 }
 
-.story-abstract {
-    font-size: 1rem;
-    color: var(--gray-medium);
-    margin-bottom: 1rem;
-}
-
-.story-byline {
+.byline {
     font-style: italic;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
-}
-
-.story-date {
-    font-size: 0.8rem;
     color: var(--gray-medium);
 }
 
-@media (max-width: 768px) {
+.date {
+    font-size: 0.85rem;
+    color: var(--gray-medium);
+    display: block;
+}
+
+/* Section headings */
+h2.border-bottom {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.section-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+    text-align: left;
+    cursor: pointer;
+}
+
+/* Spacing for all card types */
+.card {
+    margin-bottom: 1.5rem;
+}
+
+/* Large devices (desktop, 992px to 1199px) */
+@media (max-width: 1199px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    /* Hide original nav and controls */
+    .category-list {
+        display: none;
+    }
+
+    .controls-card {
+        display: none;
+    }
+
+    /* Add new controls to header */
+    header {
+        padding: 1rem 0;
+    }
+
+    /* Add black bar for controls */
+    .mobile-controls {
+        display: flex;
+        justify-content: flex-end;
+        background-color: var(--primary-color);
+        padding: 0.5rem 2rem;
+        border-top: 1px solid var(--secondary-color);
+    }
+
+    .mobile-controls select,
+    .mobile-controls button {
+        background-color: transparent;
+        border: none;
+        color: var(--secondary-color);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.25rem 1rem;
+        min-width: 150px;
+        height: auto;
+    }
+
+    .mobile-controls button {
+        font-weight: normal;
+    }
+
+    .mobile-controls select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    }
+
+    /* Slightly reduce image heights */
+    .col-md-8 .card-img-top {
+        height: 350px;
+    }
+
+    .col-md-4 .card-img-top {
+        height: 220px;
+    }
+
+    .small-card .card-img-top {
+        height: 160px;
+    }
+}
+
+/* Medium devices (tablets, 768px to 991px) */
+@media (max-width: 991px) {
     .container {
         padding: 1rem;
     }
 
+    /* Double-wide becomes full width */
+    .col-md-8 {
+        width: 100%;
+    }
+
+    /* Regular cards become half width */
+    .col-md-4 {
+        width: 50%;
+    }
+
+    /* Small cards become half width */
+    .small-card {
+        width: 50%;
+    }
+
+    /* Adjust font sizes */
+    .col-md-8 .card-title {
+        font-size: 1.5rem;
+    }
+
+    .col-md-4 .card-title {
+        font-size: 1.25rem;
+    }
+
+    /* Adjust image heights */
+    .col-md-8 .card-img-top {
+        height: 300px;
+    }
+
+    .col-md-4 .card-img-top {
+        height: 200px;
+    }
+
+    .small-card .card-img-top {
+        height: 150px;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+}
+
+/* Small devices (landscape phones, 576px to 767px) */
+@media (max-width: 767px) {
     h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
+    }
+
+    .container {
+        padding: 0.75rem;
+    }
+
+    /* Double-wide stays full width */
+    .col-md-8 {
+        width: 100%;
+    }
+
+    /* Regular cards stay half width */
+    .col-md-4 {
+        width: 50%;
+    }
+
+    /* Small cards become full width */
+    .small-card {
+        width: 100%;
+    }
+
+    /* Further reduce image heights */
+    .col-md-8 .card-img-top {
+        height: 250px;
+    }
+
+    .col-md-4 .card-img-top {
+        height: 180px;
+    }
+
+    .small-card .card-img-top {
+        height: 200px;
+    }
+
+    .card-body {
+        padding: 1rem;
     }
 
     .controls {
@@ -214,5 +464,57 @@ button:hover {
     select, button {
         width: 100%;
         max-width: 300px;
+    }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .container {
+        padding: 0.5rem;
+    }
+
+    /* All cards become full width */
+    .col-md-8,
+    .col-md-4,
+    .small-card {
+        width: 100%;
+    }
+
+    /* Adjust image heights for mobile */
+    .col-md-8 .card-img-top {
+        height: 200px;
+    }
+
+    .col-md-4 .card-img-top {
+        height: 200px;
+    }
+
+    .small-card .card-img-top {
+        height: 180px;
+    }
+
+    /* Adjust font sizes for mobile */
+    .col-md-8 .card-title {
+        font-size: 1.25rem;
+    }
+
+    .col-md-4 .card-title {
+        font-size: 1.25rem;
+    }
+
+    .small-card .card-title {
+        font-size: 1.1rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+
+    .card-body {
+        padding: 1rem;
     }
 }

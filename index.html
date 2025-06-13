@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NYT News Stories</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/nyt.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
 <body>
@@ -35,7 +37,7 @@
                     <option value="dining">Dining</option>
                     <option value="fashion">Fashion</option>
                     <option value="health">Health Magazine</option>
-                    <option value="opinion/national">National Opinion</option>
+                    <option value="opinion">National Opinion</option>
                     <option value="politics">Politics</option>
                     <option value="realestate">Real Estate</option>
                     <option value="science">Science</option>
@@ -45,9 +47,28 @@
                 </select>
                 <button id="refreshButton" aria-label="Refresh stories">Refresh Stories</button>
             </div>
+            <!-- Mobile controls that show up when nav is hidden -->
+            <div class="controls-content mobile-controls">
+                <select id="mobileSectionSelect" aria-label="Select news section">
+                    <option value="home">Home</option>
+                    <option value="arts">Arts</option>
+                    <option value="business">Business</option>
+                    <option value="dining">Dining</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="health">Health Magazine</option>
+                    <option value="opinion">National Opinion</option>
+                    <option value="politics">Politics</option>
+                    <option value="realestate">Real Estate</option>
+                    <option value="science">Science</option>
+                    <option value="sports">Sports</option>
+                    <option value="technology">Technology</option>
+                    <option value="world">World</option>
+                </select>
+                <button id="mobileRefreshButton" aria-label="Refresh stories">Refresh Stories</button>
+            </div>
         </header>
         <main>
-            <div id="storiesContainer" class="stories-grid"></div>
+            <div id="storiesContainer" class="row"></div>
         </main>
     </div>
     <script src="js/nyt.js"></script>
