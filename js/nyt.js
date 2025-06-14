@@ -116,17 +116,15 @@ class NYTNewsApp {
 
         // Controls
         const controlsElement = document.createElement('div');
-        controlsElement.className = 'col-md-4 mb-4';
-        controlsElement.innerHTML = `
-            <div class="controls-card">
-                <h2 class="controls-title">News Sections</h2>
-                <div class="controls-content">
+        controlsElement.className = 'col-md-4 mb-4';        controlsElement.innerHTML = `
+            <div class="sections-card">
+                <h2 class="sections-title">News Sections</h2>
+                <div class="sections-content">
                     <div class="select-wrapper"></div>
                 </div>
             </div>
-        `;
-        controlsElement.querySelector('.select-wrapper').appendChild(this.sectionSelect);
-        controlsElement.querySelector('.controls-content').appendChild(this.refreshButton);
+        `;        controlsElement.querySelector('.select-wrapper').appendChild(this.sectionSelect);
+        controlsElement.querySelector('.sections-content').appendChild(this.refreshButton);
         firstRow.appendChild(controlsElement);
         this.storiesContainer.appendChild(firstRow);
 

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NYT News Stories</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/nyt.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
@@ -13,7 +14,7 @@
 <body>
     <header>
         <div class="container">
-            <h1>NYT</h1>
+            <h1>New York Times</h1>
             <ul class="category-list">
                 <li>Home</li>
                 <li>Arts</li>
@@ -29,7 +30,7 @@
                 <li>Technology</li>
                 <li>World</li>
             </ul>
-            <div class="controls">
+            <div class="nav-controls">
                 <select id="sectionSelect" aria-label="Select news section">
                     <option value="home">Home</option>
                     <option value="arts">Arts</option>
@@ -46,6 +47,24 @@
                     <option value="world">World</option>
                 </select>
                 <button id="refreshButton" aria-label="Refresh stories">Refresh Stories</button>
+            </div>
+            <div class="nav-controls-mobile">
+                <select id="mobileSectionSelect" aria-label="Select news section">
+                    <option value="home">Home</option>
+                    <option value="arts">Arts</option>
+                    <option value="business">Business</option>
+                    <option value="dining">Dining</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="health">Health Magazine</option>
+                    <option value="opinion">National Opinion</option>
+                    <option value="politics">Politics</option>
+                    <option value="realestate">Real Estate</option>
+                    <option value="science">Science</option>
+                    <option value="sports">Sports</option>
+                    <option value="technology">Technology</option>
+                    <option value="world">World</option>
+                </select>
+                <button id="mobileRefreshButton" aria-label="Refresh stories"><i class="bi bi-arrow-clockwise icon-spacing"></i> News</button>
             </div>
         </div>
     </header>
@@ -73,6 +92,24 @@
                 <li>Technology</li>
                 <li>World</li>
             </ul>
+            <div class="nav-controls-mobile">
+                <select id="footerMobileSectionSelect" aria-label="Select news section">
+                    <option value="home">Home</option>
+                    <option value="arts">Arts</option>
+                    <option value="business">Business</option>
+                    <option value="dining">Dining</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="health">Health Magazine</option>
+                    <option value="opinion">National Opinion</option>
+                    <option value="politics">Politics</option>
+                    <option value="realestate">Real Estate</option>
+                    <option value="science">Science</option>
+                    <option value="sports">Sports</option>
+                    <option value="technology">Technology</option>
+                    <option value="world">World</option>
+                </select>
+                <button id="footerMobileRefreshButton" aria-label="Refresh stories"><i class="bi bi-arrow-clockwise icon-spacing"></i> News</button>
+            </div>
             <p class="copyright">Powered by The New York Times - Top Stories API </p>
             <p class="copyright">&copy; 2025 - Dank Mitchell</p>
         </div>
