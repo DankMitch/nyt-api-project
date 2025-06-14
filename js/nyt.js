@@ -11,11 +11,12 @@ class NYTNewsApp {
         this.categoryList = document.querySelector('.category-list');
         this.mobileRefreshButton = document.getElementById('mobileRefreshButton');
         this.footerMobileRefreshButton = document.getElementById('footerMobileRefreshButton');
-
-        // Add screen size change listener
-        const xlBreakpoint = window.matchMedia('(min-width: 1200px)');
-        xlBreakpoint.addListener((e) => {
-            // Reload stories when crossing the XL breakpoint
+        
+        // Initialize all select dropdowns with the same options
+        this.initializeSelects();// Add screen size change listener
+        const lgBreakpoint = window.matchMedia('(min-width: 992px)');
+        lgBreakpoint.addListener((e) => {
+            // Reload stories when crossing the LG breakpoint
             this.loadStories();
         });
 
@@ -44,45 +45,46 @@ class NYTNewsApp {
                 window.scrollTo(0, 0);  // Scroll to top when clicking footer nav
             }
         };
-        
-        // Add click events to both header and footer nav
+          // Add click events to both header and footer nav
         this.categoryList.addEventListener('click', handleCategoryClick);
-        document.querySelector('.footer-nav').addEventListener('click', handleCategoryClick);
-        
-        // Add click handler to footer nav
         document.querySelector('.footer-nav').addEventListener('click', handleCategoryClick);
         
         // Initial load
         this.loadStories();
-    }     async fetchStories(category) {
-        const url = `${this.baseUrl}/${category}.json?api-key=${this.apiKey}`;
-        try {
-            const response = await fetch(url);
+    }    
+    fetchStories(category) {
+    const url = `${this.baseUrl}/${category}.json?api-key=${this.apiKey}`;
+    return fetch(url)
+        .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data = await response.json();
-            return data.results;
-        } catch (error) {
+            return response.json();
+        })
+        .then(data => data.results)
+        .catch(error => {
             console.error(`Error fetching ${category} stories:`, error);
             throw error;
-        }
-    }    async loadStories() {
-        try {
-            const stories = await this.fetchStories(this.sectionSelect.value);
+        });
+}
+
+loadStories() {
+    this.fetchStories(this.sectionSelect.value)
+        .then(stories => {
             if (!stories || stories.length === 0) {
                 throw new Error('No stories available');
             }
             this.displayStories(stories);
-        } catch (error) {
+        })
+        .catch(error => {
             this.storiesContainer.innerHTML = `
                 <div class="alert alert-info" role="alert">
                     <h4>Story Update</h4>
                     <p>We're currently refreshing our news feed for this section.</p>
                     <p>In the meantime, try exploring other sections or check back in a few moments.</p>
                 </div>`;
-        }
-    }
+        });
+}
 
     formatDate(dateString) {
         const options = { 
@@ -103,14 +105,15 @@ class NYTNewsApp {
         return `
             <div class="card">
                 <img src="${imageToUse.url}" alt="${imageToUse.caption}" class="card-img-top" onerror="this.src='${defaultImage.url}'">
-                <div class="card-body">
-                    <div class="small text-uppercase mb-2" style="color: var(--primary-color);">${story.section}</div>
-                    <h2 class="card-title">
+                <div class="card-body">                    <div class="small text-uppercase mb-2" style="color: var(--primary-color);">${story.section}</div>
+                    <h3 class="card-title">
                         <a href="${story.url}" target="_blank" rel="noopener noreferrer">${story.title}</a>
-                    </h2>
-                    ${!isCategoryCard ? `<p class="card-text">${story.abstract}</p>` : ''}
-                    <p class="byline">${story.byline}</p>
-                    <span class="date">${this.formatDate(story.published_date)}</span>
+                    </h3>
+                    ${!isCategoryCard ? `
+                        <p class="card-text">${story.abstract}</p>
+                        <p class="byline">${story.byline}</p>
+                        <span class="date">${this.formatDate(story.published_date)}</span>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -118,33 +121,26 @@ class NYTNewsApp {
     displayStories(stories) {
         this.storiesContainer.innerHTML = '';
         
-        // First row - Large story and small card
-        const firstRow = document.createElement('div');
-        firstRow.className = 'row mb-4';
-        
-        // Main story (double-wide)
-        const firstStory = stories[0];
-        const firstImage = firstStory.multimedia?.find(media => 
+        // Create main container row
+        const mainRow = document.createElement('div');
+        mainRow.className = 'row mb-4';
+          // Top Stories header
+        const topStoriesHeader = document.createElement('div');
+        topStoriesHeader.className = 'col-12 mb-3';
+        topStoriesHeader.innerHTML = '<h2>Top Stories</h2>';
+        mainRow.appendChild(topStoriesHeader);
+
+        // Top story (double-wide)
+        const topStory = stories[0];
+        const topImage = topStory.multimedia?.find(media => 
             media.type === 'image' && 
             (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-        );        const firstStoryElement = document.createElement('div');
-        firstStoryElement.className = 'col-12 col-lg-8 first-story mb-4';
-        firstStoryElement.innerHTML = this.createStoryCard(firstStory, firstImage);
-        firstRow.appendChild(firstStoryElement);
-
-        // Small card next to main story (only visible on large screens via CSS)
-        const secondStory = stories[1];
-        const secondImage = secondStory.multimedia?.find(media => 
-            media.type === 'image' && 
-            (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-        );        const secondStoryElement = document.createElement('div');
-        secondStoryElement.className = 'col-12 col-sm-6 col-lg-4 second-story mb-4';
-        secondStoryElement.innerHTML = this.createStoryCard(secondStory, secondImage);
-        firstRow.appendChild(secondStoryElement);
-
-        // Controls (only visible on XL screens)
+        );const topStoryElement = document.createElement('div');
+        topStoryElement.className = 'col-12 col-sm-10 col-md-8 mb-4 top-story';
+        topStoryElement.innerHTML = this.createStoryCard(topStory, topImage);
+        mainRow.appendChild(topStoryElement);// News Sections card (visible on XL and LG screens)
         const controlsElement = document.createElement('div');
-        controlsElement.className = 'col-md-4 mb-4';
+        controlsElement.className = 'col-md-4 mb-4 d-none d-lg-block';
         controlsElement.innerHTML = `
             <div class="sections-card">
                 <h2 class="sections-title">News Sections</h2>
@@ -155,271 +151,109 @@ class NYTNewsApp {
         `;
         controlsElement.querySelector('.select-wrapper').appendChild(this.sectionSelect);
         controlsElement.querySelector('.sections-content').appendChild(this.refreshButton);
-        firstRow.appendChild(controlsElement);
-        this.storiesContainer.appendChild(firstRow);
+        mainRow.appendChild(controlsElement);
 
-        // Second and third rows - Three small cards each, starting from the third story
-        for (let row = 0; row < 2; row++) {
-            const smallRow = document.createElement('div');
-            smallRow.className = 'row mb-4';            for (let i = 0; i < 3; i++) {
-                // On XL screens (where second-story is hidden), start from story 2
-                // On other screens (where second-story is shown), start from story 3
-                const startIndex = window.matchMedia('(min-width: 1200px)').matches ? 1 : 2;
-                const storyIndex = startIndex + (row * 3) + i;
-                if (storyIndex < stories.length) {
-                    const story = stories[storyIndex];
-                    const image = story.multimedia?.find(media => 
-                        media.type === 'image' && 
-                        (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-                    );                    const storyElement = document.createElement('div');
-                    storyElement.className = 'col-12 col-sm-6 col-lg-4 mb-4';
-                    storyElement.innerHTML = this.createStoryCard(story, image);
-                    smallRow.appendChild(storyElement);
-                }
-            }
-            this.storiesContainer.appendChild(smallRow);
-        }        // Categories row
-        const categories = ['Politics', 'World', 'Opinion', 'Business'];
-        const categoriesRow = document.createElement('div');        categoriesRow.className = 'row mb-2';
-        categories.forEach(category => {
-            const col = document.createElement('div');
-            col.className = 'col-md-3';
-            col.innerHTML = `<h2 class="section-header" data-section="${category.toLowerCase()}">${category} ></h2>`;
-            col.querySelector('.section-header').addEventListener('click', () => {
-                this.sectionSelect.value = category.toLowerCase();
-                this.loadStories();
-                window.scrollTo(0, 0);
-            });
-            categoriesRow.appendChild(col);
-        });
-        this.storiesContainer.appendChild(categoriesRow);
+        this.storiesContainer.appendChild(mainRow);
 
-        // Mini cards row - one for each category
-        const miniRow = document.createElement('div');
-        miniRow.className = 'row mb-4';
+        // Regular stories grid - starts from index 1
+        const storiesRow = document.createElement('div');
+        storiesRow.className = 'row';
         
-        // Load and display stories for each category
-        Promise.all(categories.map(category => {
-            const url = `${this.baseUrl}/${category.toLowerCase()}.json?api-key=${this.apiKey}`;
-            return fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.results && data.results.length > 0) {
-                        const story = data.results[0];  // Get the top story from each category
-                        const image = story.multimedia?.find(media => 
-                            media.type === 'image' && 
-                            (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-                        );                        const storyElement = document.createElement('div');
-                        storyElement.className = 'col-md-3 mb-4';
-                        storyElement.innerHTML = this.createStoryCard(story, image, true);
-                        miniRow.appendChild(storyElement);
-                    } else {
-                        // If no story found for category, create empty column
-                        const emptyElement = document.createElement('div');
-                        emptyElement.className = 'col-md-3 mb-4';
-                        miniRow.appendChild(emptyElement);
-                    }
-                })
-                .catch(() => {
-                    // Handle error by adding empty column
-                    const emptyElement = document.createElement('div');
-                    emptyElement.className = 'col-md-3 mb-4';
-                    miniRow.appendChild(emptyElement);
-                });
-        }));
-        this.storiesContainer.appendChild(miniRow);
-
-        // Last featured row
-        const lastFeaturedRow = document.createElement('div');
-        lastFeaturedRow.className = 'row mb-4';
-        const lastFeaturedStory = stories[11];
-        if (lastFeaturedStory) {
-            const image = lastFeaturedStory.multimedia?.find(media => 
-                media.type === 'image' && 
-                (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-            );
-            const storyElement = document.createElement('div');
-            storyElement.className = 'col-md-8 mb-4';
-            storyElement.innerHTML = this.createStoryCard(lastFeaturedStory, image);
-            lastFeaturedRow.appendChild(storyElement);
-
-            const smallStory = stories[12];
-            if (smallStory) {
-                const smallImage = smallStory.multimedia?.find(media => 
-                    media.type === 'image' &&
-                    (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-                );
-                const smallElement = document.createElement('div');
-                smallElement.className = 'col-md-4 mb-4';
-                smallElement.innerHTML = this.createStoryCard(smallStory, smallImage);
-                lastFeaturedRow.appendChild(smallElement);
-            }
-        }
-        this.storiesContainer.appendChild(lastFeaturedRow);
-
-        // Add two buffer rows before second categories
-        const bufferRow1 = document.createElement('div');
-        bufferRow1.className = 'row mb-4';
-        for (let i = 13; i < 16; i++) {
-            if (i < stories.length) {
-                const story = stories[i];
-                const image = story.multimedia?.find(media => 
-                    media.type === 'image' && 
-                    (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-                );
-                const storyElement = document.createElement('div');
-                storyElement.className = 'col-md-4 mb-4';
-                storyElement.innerHTML = this.createStoryCard(story, image);
-                bufferRow1.appendChild(storyElement);
-            }
-        }
-        this.storiesContainer.appendChild(bufferRow1);
-
-        const bufferRow2 = document.createElement('div');
-        bufferRow2.className = 'row mb-4';
-        for (let i = 16; i < 19; i++) {
-            if (i < stories.length) {
-                const story = stories[i];
-                const image = story.multimedia?.find(media => 
-                    media.type === 'image' && 
-                    (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-                );
-                const storyElement = document.createElement('div');
-                storyElement.className = 'col-md-4 mb-4';
-                storyElement.innerHTML = this.createStoryCard(story, image);
-                bufferRow2.appendChild(storyElement);
-            }
-        }
-        this.storiesContainer.appendChild(bufferRow2);        // Second categories row with logging
-        console.log('Loading second categories...');
-        const categories2 = ['Arts', 'Science', 'Technology', 'Health'];
-        const categoriesRow2 = document.createElement('div');
-        categoriesRow2.className = 'row mb-2';
-        categories2.forEach(category => {
-            const col = document.createElement('div');
-            col.className = 'col-md-3';
-            col.innerHTML = `<h2 class="section-header" data-section="${category.toLowerCase()}">${category} ></h2>`;
-            col.querySelector('.section-header').addEventListener('click', () => {
-                this.sectionSelect.value = category.toLowerCase();
-                this.loadStories();
-                window.scrollTo(0, 0);
-            });
-            categoriesRow2.appendChild(col);
-        });
-        this.storiesContainer.appendChild(categoriesRow2);        // Mini cards row for second categories with improved error handling
-        const miniRow2 = document.createElement('div');
-        miniRow2.className = 'row mb-4';
-        
-        // Create array to hold stories in correct order
-        const categoryStories = Array(categories2.length).fill(null);
-        
-        Promise.all(categories2.map((category, index) => {
-            const categorySlug = category.toLowerCase();
-            console.log(`Fetching ${categorySlug} stories...`);
-            const url = `${this.baseUrl}/${categorySlug}.json?api-key=${this.apiKey}`;
-            return fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        console.error(`Error fetching ${categorySlug}: ${response.status}`);
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.results && data.results.length > 0) {
-                        const story = data.results[0];
-                        const image = story.multimedia?.find(media => 
-                            media.type === 'image' && 
-                            (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-                        );
-                        // Store story in the correct position
-                        categoryStories[index] = { story, image };
-                    }
-                })
-                .catch(error => {
-                    console.error(`Error with ${categorySlug}:`, error);
-                });
-        })).then(() => {
-            // Add stories to miniRow2 in correct order
-            categoryStories.forEach((item, index) => {
-                const storyElement = document.createElement('div');
-                storyElement.className = 'col-md-3 mb-4';
-                if (item) {
-                    storyElement.innerHTML = this.createStoryCard(item.story, item.image, true);
-                }
-                miniRow2.appendChild(storyElement);
-            });
-        });
-        this.storiesContainer.appendChild(miniRow2);
-
-        // Remaining stories in regular grid
-        const remainingRow = document.createElement('div');
-        remainingRow.className = 'row';
-        for (let i = 19; i < stories.length; i++) {
+        // Add all regular stories (excluding last 8 which are for mini cards)
+        for (let i = 1; i < stories.length - 8; i++) {
             const story = stories[i];
             const image = story.multimedia?.find(media => 
                 media.type === 'image' && 
                 (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
             );
             const storyElement = document.createElement('div');
-            storyElement.className = 'col-md-4 mb-4';
+            storyElement.className = 'col-12 col-sm-6 col-lg-4 mb-4';
             storyElement.innerHTML = this.createStoryCard(story, image);
-            remainingRow.appendChild(storyElement);
-        }
-        this.storiesContainer.appendChild(remainingRow);
-    }
-
-    async createCategorySection(categories, options = {}) {
-        const { addBufferRows = false } = options;
+            storiesRow.appendChild(storyElement);        }
+        this.storiesContainer.appendChild(storiesRow);        // First row of mini cards
+        const firstRowCategories = ['Politics', 'World', 'Opinion', 'Business'];
+        const firstCategoryRow = document.createElement('div');
+        firstCategoryRow.className = 'row mb-4';
         
-        // Create category headers
-        const categoriesRow = document.createElement('div');
-        categoriesRow.className = 'row mb-2';
-        categories.forEach(category => {
-            const col = document.createElement('div');
-            col.className = 'col-md-3';
-            col.innerHTML = `<h2 class="section-header" data-section="${category.toLowerCase()}">${category} ></h2>`;
-            col.querySelector('.section-header').addEventListener('click', () => {
-                this.sectionSelect.value = category.toLowerCase();
-                this.loadStories();
-                window.scrollTo(0, 0);
-            });
-            categoriesRow.appendChild(col);
+        Promise.all(firstRowCategories.map(category => {
+            const url = `${this.baseUrl}/${category.toLowerCase()}.json?api-key=${this.apiKey}`;
+            return fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const categoryCol = document.createElement('div');
+                    categoryCol.className = 'col-6 col-sm-4 col-md-3';
+
+                    const header = document.createElement('h2');
+                    header.className = 'section-header mb-3';
+                    header.setAttribute('data-section', category.toLowerCase());
+                    header.innerHTML = `${category} >`;
+                    header.addEventListener('click', () => {
+                        this.sectionSelect.value = category.toLowerCase();
+                        this.loadStories();
+                        window.scrollTo(0, 0);
+                    });
+                    
+                    categoryCol.appendChild(header);
+
+                    if (data.results && data.results.length > 0) {
+                        const story = data.results[0];
+                        const image = story.multimedia?.find(media => 
+                            media.type === 'image' && 
+                            (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
+                        );
+                        const miniCard = document.createElement('div');
+                        miniCard.innerHTML = this.createStoryCard(story, image, true);
+                        categoryCol.appendChild(miniCard);
+                    }
+
+                    firstCategoryRow.appendChild(categoryCol);
+                })
+                .catch(error => console.error(`Error fetching ${category} story:`, error));
+        })).then(() => {
+            this.storiesContainer.insertBefore(firstCategoryRow, storiesRow);
         });
 
-        // Create mini cards row
-        const miniRow = document.createElement('div');
-        miniRow.className = 'row mb-4';
-        
-        // Load category stories in parallel but maintain order
-        const categoryStories = await Promise.all(categories.map(async (category) => {
-            try {
-                const stories = await this.fetchStories(category.toLowerCase());
-                if (stories?.length > 0) {
-                    return {
-                        story: stories[0],
-                        image: this.findArticleImage(stories[0])
-                    };
-                }
-            } catch (error) {
-                console.error(`Error loading ${category} stories:`, error);
-            }
-            return null;
-        }));
+        // Second row of mini cards
+        const secondRowCategories = ['Arts', 'Science', 'Technology', 'Health'];
+        const secondCategoryRow = document.createElement('div');
+        secondCategoryRow.className = 'row mb-4';          Promise.all(secondRowCategories.map(category => {
+            const url = `${this.baseUrl}/${category.toLowerCase()}.json?api-key=${this.apiKey}`;
+            return fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const categoryCol = document.createElement('div');
+                    categoryCol.className = 'col-6 col-sm-4 col-md-3';
 
-        // Create cards in correct order
-        categoryStories.forEach(item => {
-            const storyElement = document.createElement('div');
-            storyElement.className = 'col-md-3 mb-4';
-            if (item) {
-                storyElement.innerHTML = this.createStoryCard(item.story, item.image, true);
-            }
-            miniRow.appendChild(storyElement);
-        });
+                    const header = document.createElement('h2');
+                    header.className = 'section-header mb-3';
+                    header.setAttribute('data-section', category.toLowerCase());
+                    header.innerHTML = `${category} >`;
+                    header.addEventListener('click', () => {
+                        this.sectionSelect.value = category.toLowerCase();
+                        this.loadStories();
+                        window.scrollTo(0, 0);
+                    });
+                    
+                    categoryCol.appendChild(header);
 
-        return [categoriesRow, miniRow];
-    }
+                    if (data.results && data.results.length > 0) {
+                        const story = data.results[0];
+                        const image = story.multimedia?.find(media => 
+                            media.type === 'image' && 
+                            (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
+                        );
+                        const miniCard = document.createElement('div');
+                        miniCard.innerHTML = this.createStoryCard(story, image, true);
+                        categoryCol.appendChild(miniCard);
+                    }
 
+                    secondCategoryRow.appendChild(categoryCol);
+                })
+                .catch(error => console.error(`Error fetching ${category} story:`, error));
+        })).then(() => {
+            this.storiesContainer.appendChild(secondCategoryRow);
+        }); // Close the Promise.all
+    } // Close the displayStories method
     findArticleImage(story) {
         return story.multimedia?.find(media => 
             media.type === 'image' && 
@@ -429,7 +263,42 @@ class NYTNewsApp {
             caption: 'The New York Times'
         };
     }
-}
+
+    initializeSelects() {
+        const options = [
+            { value: 'home', text: 'Home' },
+            { value: 'arts', text: 'Arts' },
+            { value: 'business', text: 'Business' },
+            { value: 'dining', text: 'Dining' },
+            { value: 'fashion', text: 'Fashion' },
+            { value: 'health', text: 'Health Magazine' },
+            { value: 'opinion', text: 'National Opinion' },
+            { value: 'politics', text: 'Politics' },
+            { value: 'realestate', text: 'Real Estate' },
+            { value: 'science', text: 'Science' },
+            { value: 'sports', text: 'Sports' },
+            { value: 'technology', text: 'Technology' },
+            { value: 'world', text: 'World' }
+        ];
+
+        const selects = [
+            document.getElementById('mobileSectionSelect'),
+            document.getElementById('footerMobileSectionSelect'),
+            this.sectionSelect
+        ];
+
+        selects.forEach(select => {
+            if (select) {
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt.value;
+                    option.textContent = opt.text;
+                    select.appendChild(option);
+                });
+            }
+        });
+    }
+} // End of NYTNewsApp class
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

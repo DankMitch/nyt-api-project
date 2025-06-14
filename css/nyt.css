@@ -4,11 +4,13 @@
     --gray-light: #ebeaea;
     --gray-medium: #666666;
     --border-color: #e2e2e2;
-
     /* Font sizes for large screens (≥992px) */
-    --title-large: 1.75rem;
+    --title-large: 2rem;
+    /* Double-wide cards */
     --title-medium: 1.5rem;
-    --title-small: 1.35rem;
+    /* Regular stories */
+    --title-small: 1.1rem;
+    /* Category cards */
     --text-size: 1rem;
     --byline-size: 0.9rem;
     --date-size: 0.85rem;
@@ -118,6 +120,9 @@ h1 {
     justify-content: center;
     gap: 1.5rem;
     border-top: 1px solid var(--secondary-color);
+    border-bottom: 1px solid var(--gray-dark);
+    margin-bottom: -1px;
+    /* Prevents double border effect */
 }
 
 .nav-controls-mobile {
@@ -126,9 +131,12 @@ h1 {
     display: flex;
     justify-content: flex-end;
     gap: 1.5rem;
-    /* match nav-controls gap */
     border-top: 1px solid var(--secondary-color);
-    border-bottom: 1px solid var(--secondary-color);
+    border-bottom: 1px solid var(--gray-dark);
+    position: relative;
+    /* Creates new stacking context */
+    z-index: 1;
+    /* Ensures proper layering */
 }
 
 .nav-controls select,
@@ -287,16 +295,67 @@ button:hover {
             var(--secondary-color) 100%);
 }
 
-.card:hover .card-title a {
+/* Base card styles */
+.card {
+    border: none;
+    margin-bottom: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 1rem 0.75rem;
+}
+
+.card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: var(--title-medium);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.card-title a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.card-title a:hover {
     text-decoration: underline;
 }
 
-.card .small {
+.card-text {
+    font-size: var(--text-size);
     color: var(--primary-color);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Top story specific styles */
+.top-story .card-title {
+    font-size: var(--title-large);
+}
+
+.top-story .card-img-top {
+    height: var(--img-height-large);
+}
+
+/* Byline and date styles */
+.byline, .date {
+    color: var(--gray-medium);
+}
+
+.byline {
+    font-size: var(--byline-size);
+    margin-bottom: 0.25rem;
+}
+
+.date {
+    font-size: var(--date-size);
+    display: block;
 }
 
 /* Card Layout System 
@@ -309,9 +368,9 @@ button:hover {
 /* Update font sizes for medium screens */
 @media (max-width: 991px) {
     :root {
-        --title-large: 1.5rem;
-        --title-medium: 1.35rem;
-        --title-small: 1.2rem;
+        --title-large: 1.75rem;
+        --title-medium: 1.15rem;
+        --title-small: 1rem;
         --text-size: 0.95rem;
         --byline-size: 0.85rem;
         --date-size: 0.8rem;
@@ -321,9 +380,9 @@ button:hover {
 /* Update font sizes for small screens */
 @media (max-width: 767px) {
     :root {
-        --title-large: 1.35rem;
-        --title-medium: 1.2rem;
-        --title-small: 1.1rem;
+        --title-large: 1.5rem;
+        --title-medium: 1.1rem;
+        --title-small: 0.95rem;
         --text-size: 0.9rem;
         --byline-size: 0.8rem;
         --date-size: 0.75rem;
@@ -373,6 +432,18 @@ button:hover {
     transition: color 0.3s ease, border-bottom-color 0.3s ease;
 }
 
+.section-header {
+    cursor: pointer;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.section-header:hover {
+    color: var(--gray-medium);
+    border-bottom-color: var(--gray-medium);
+}
+
 @media (max-width: 991px) {
     .section-header {
         font-size: var(--title-small);
@@ -392,59 +463,60 @@ button:hover {
     margin-bottom: 1.5rem;
 }
 
-/* Responsive Breakpoints */
-:root {
-    --breakpoint-xl: 1199px;
-    /* Large desktop */
-    --breakpoint-lg: 991px;
-    /* Desktop */
-    --breakpoint-md: 767px;
-    /* Tablet */
-    --breakpoint-sm: 575px;
-    /* Mobile */
-}
-
-/* XL screens (≥1200px) */
-@media (min-width: 1200px) {
+/* Large screens and up (≥992px) */
+@media (min-width: 992px) {
     .nav-controls {
-        display: flex;
-        /* Show on XL */
+        display: flex !important;
     }
 
     .nav-controls-mobile {
-        display: none;
-        /* Hide on XL */
+        display: none !important;
     }
 
-    /* Show sections card only on XL screens */
-    .sections-card {
-        display: flex;
-    }
-
+    /* Show regular nav categories on large screens */
     .category-list {
-        display: flex;
+        display: flex !important;
     }
 
-    /* Hide second story on XL screens */
+    /* Show sections card on large and XL screens */
+    .sections-card {
+        display: flex !important;
+    }
+
+    /* Hide second story on large screens */
     .second-story {
         display: none !important;
     }
+
+    .category-list {
+        gap: 1rem;
+    }
+
+    .category-list li {
+        font-size: 0.75rem;
+        letter-spacing: 0.3px;
+    }
 }
 
-/* Large devices (desktop, 992px to 1199px) */
-@media (max-width: 1199px) {
+/* Medium devices and below (less than 992px) */
+@media (max-width: 991px) {
 
     /* Layout adjustments */
     .nav-controls {
         display: none !important;
     }
 
+    /* Show mobile nav controls */
     .nav-controls-mobile {
         display: flex !important;
     }
 
-    /* Hide sections card and category list on large and smaller screens */
-    .category-list, .sections-card {
+    /* Hide regular nav categories and sections card */
+    .category-list {
+        display: none !important;
+    }
+
+    .sections-card {
         display: none !important;
     }
 
@@ -630,4 +702,21 @@ button:hover {
     background-color: var(--secondary-color);
     width: 100%;
     padding: 2rem 0;
+}
+
+.byline {
+    font-family: 'Merriweather', serif;
+    font-size: var(--byline-size);
+    color: var(--gray-medium);
+    margin-bottom: 0.25rem;
+}
+
+.date {
+    font-size: var(--date-size);
+    color: var(--gray-medium);
+    display: block;
+}
+
+.card:hover .card-title a {
+    text-decoration: underline;
 }
