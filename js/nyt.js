@@ -9,9 +9,27 @@ class NYTNewsApp {
         this.refreshButton = document.getElementById('refreshButton');
         this.storiesContainer = document.getElementById('storiesContainer');
         this.categoryList = document.querySelector('.category-list');
-          // Event listeners
+        this.mobileRefreshButton = document.getElementById('mobileRefreshButton');
+        this.footerMobileRefreshButton = document.getElementById('footerMobileRefreshButton');
+
+        // Add screen size change listener
+        const xlBreakpoint = window.matchMedia('(min-width: 1200px)');
+        xlBreakpoint.addListener((e) => {
+            // Reload stories when crossing the XL breakpoint
+            this.loadStories();
+        });
+
+        // Event listeners
         this.sectionSelect.addEventListener('change', () => this.loadStories());
         this.refreshButton.addEventListener('click', () => this.loadStories());
+        
+        // Add refresh functionality to mobile refresh buttons with mobile
+        if (this.mobileRefreshButton) {
+            this.mobileRefreshButton.addEventListener('click', () => this.loadStories());
+        }
+        if (this.footerMobileRefreshButton) {
+            this.footerMobileRefreshButton.addEventListener('click', () => this.loadStories());
+        }
 
         // Function to handle category clicks
         const handleCategoryClick = (e) => {
@@ -100,48 +118,61 @@ class NYTNewsApp {
     displayStories(stories) {
         this.storiesContainer.innerHTML = '';
         
-        // First row - Large story and controls
+        // First row - Large story and small card
         const firstRow = document.createElement('div');
         firstRow.className = 'row mb-4';
         
+        // Main story (double-wide)
         const firstStory = stories[0];
         const firstImage = firstStory.multimedia?.find(media => 
             media.type === 'image' && 
             (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-        );
-        const firstStoryElement = document.createElement('div');
-        firstStoryElement.className = 'col-md-8 mb-4';
+        );        const firstStoryElement = document.createElement('div');
+        firstStoryElement.className = 'col-12 col-lg-8 first-story mb-4';
         firstStoryElement.innerHTML = this.createStoryCard(firstStory, firstImage);
         firstRow.appendChild(firstStoryElement);
 
-        // Controls
+        // Small card next to main story (only visible on large screens via CSS)
+        const secondStory = stories[1];
+        const secondImage = secondStory.multimedia?.find(media => 
+            media.type === 'image' && 
+            (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
+        );        const secondStoryElement = document.createElement('div');
+        secondStoryElement.className = 'col-12 col-sm-6 col-lg-4 second-story mb-4';
+        secondStoryElement.innerHTML = this.createStoryCard(secondStory, secondImage);
+        firstRow.appendChild(secondStoryElement);
+
+        // Controls (only visible on XL screens)
         const controlsElement = document.createElement('div');
-        controlsElement.className = 'col-md-4 mb-4';        controlsElement.innerHTML = `
+        controlsElement.className = 'col-md-4 mb-4';
+        controlsElement.innerHTML = `
             <div class="sections-card">
                 <h2 class="sections-title">News Sections</h2>
                 <div class="sections-content">
                     <div class="select-wrapper"></div>
                 </div>
             </div>
-        `;        controlsElement.querySelector('.select-wrapper').appendChild(this.sectionSelect);
+        `;
+        controlsElement.querySelector('.select-wrapper').appendChild(this.sectionSelect);
         controlsElement.querySelector('.sections-content').appendChild(this.refreshButton);
         firstRow.appendChild(controlsElement);
         this.storiesContainer.appendChild(firstRow);
 
-        // Second and third rows - Three small cards each
+        // Second and third rows - Three small cards each, starting from the third story
         for (let row = 0; row < 2; row++) {
             const smallRow = document.createElement('div');
-            smallRow.className = 'row mb-4';
-            
-            for (let i = 0; i < 3; i++) {
-                const storyIndex = 1 + (row * 3) + i;
+            smallRow.className = 'row mb-4';            for (let i = 0; i < 3; i++) {
+                // On XL screens (where second-story is hidden), start from story 2
+                // On other screens (where second-story is shown), start from story 3
+                const startIndex = window.matchMedia('(min-width: 1200px)').matches ? 1 : 2;
+                const storyIndex = startIndex + (row * 3) + i;
                 if (storyIndex < stories.length) {
                     const story = stories[storyIndex];
                     const image = story.multimedia?.find(media => 
                         media.type === 'image' && 
                         (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
                     );                    const storyElement = document.createElement('div');
-                    storyElement.className = 'col-md-4 mb-4';
+                    storyElement.className = 'col-12 col-sm-6 col-lg-4 mb-4';
                     storyElement.innerHTML = this.createStoryCard(story, image);
                     smallRow.appendChild(storyElement);
                 }
