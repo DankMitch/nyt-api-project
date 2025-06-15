@@ -7,7 +7,7 @@
     /* Font sizes for large screens (≥992px) */
     --title-large: 2rem;
     /* Double-wide cards */
-    --title-medium: 1.5rem;
+    --title-medium: 1.65rem;
     /* Regular stories */
     --title-small: 1.1rem;
     /* Category cards */
@@ -50,17 +50,26 @@ body {
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 15px;
+    /* Match Bootstrap's container padding */
 }
 
 main .container {
     background-color: var(--secondary-color);
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding: 2rem 15px;
+    /* Consistent padding */
+    margin: 0 auto;
+    /* Ensure center alignment */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center content */
 }
 
 #storiesContainer {
     margin: 0;
+    width: 100%;
+    max-width: 100%;
 }
 
 header {
@@ -114,20 +123,20 @@ h1 {
 
 .nav-controls {
     background-color: var(--primary-color);
-    padding: 0.75rem 0;
+    padding: 0rem 0;
     display: none;
     /* Hidden by default */
     justify-content: center;
     gap: 1.5rem;
     border-top: 1px solid var(--secondary-color);
-    border-bottom: 1px solid var(--gray-dark);
-    margin-bottom: -1px;
+    /* border-bottom: 1px solid var(--gray-dark);
+    margin-bottom: -1px; */
     /* Prevents double border effect */
 }
 
 .nav-controls-mobile {
     background-color: var(--primary-color);
-    padding: 0.75rem 2rem;
+    padding: 0.75rem 0;
     display: flex;
     justify-content: flex-end;
     gap: 1.5rem;
@@ -374,6 +383,31 @@ button:hover {
         --text-size: 0.95rem;
         --byline-size: 0.85rem;
         --date-size: 0.8rem;
+    }
+
+    header .container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    h1 {
+        order: 0;
+        /* Logo at top */
+    }
+
+    .nav-controls {
+        order: 1;
+        /* First nav */
+    }
+
+    .nav-controls-mobile {
+        order: 2;
+        /* Second nav */
+    }
+
+    .stock-ticker {
+        order: 3;
+        /* Stock ticker below both navs */
     }
 }
 
@@ -719,4 +753,181 @@ button:hover {
 
 .card:hover .card-title a {
     text-decoration: underline;
+}
+
+/* Footer Navigation Controls */
+.footer-nav-controls {
+    background-color: var(--primary-color);
+    padding: 0.75rem 0;
+    display: none;
+    justify-content: center;
+    gap: 1.5rem;
+    border-top: 1px solid var(--secondary-color);
+}
+
+.footer-nav-controls-mobile {
+    background-color: var(--primary-color);
+    padding: 0.75rem 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    /* border-top: 1px solid var(--secondary-color); */
+    position: relative;
+    z-index: 1;
+}
+
+.footer-nav-controls select,
+.footer-nav-controls button,
+.footer-nav-controls-mobile select,
+.footer-nav-controls-mobile button {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: transparent;
+    color: var(--secondary-color);
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.footer-nav-controls select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1em;
+    padding-right: 1.5rem;
+}
+
+.footer-nav-controls-mobile select {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    min-width: 150px;
+    max-width: 200px;
+    height: 1.75rem;
+    font-size: 0.85rem;
+    padding: 0 1.5rem 0 0.5rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1em;
+    padding-right: 1.5rem;
+    line-height: 1.75rem;
+}
+
+.footer-nav-controls-mobile button {
+    color: var(--secondary-color);
+    padding: 0 0.75rem;
+    height: 1.75rem;
+    min-width: auto;
+    width: auto;
+    border: 1px solid var(--secondary-color);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Update media queries for footer navigation */
+@media (min-width: 992px) {
+    .footer-nav-controls {
+        display: flex;
+    }
+
+    .footer-nav-controls-mobile {
+        display: none;
+    }
+}
+
+/* Stock Ticker Styles */
+.stock-ticker {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    height: 2.5rem;
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 1px solid var(--secondary-color);
+    border-bottom: 1px solid var(--gray-dark);
+    margin-top: -1px;
+    /* Remove gap between nav and ticker */
+}
+
+.stock-ticker-content {
+    display: inline-block;
+    animation: ticker 60s linear infinite;
+    height: 100%;
+    line-height: 2.5rem;
+    white-space: nowrap;
+}
+
+.stock-item {
+    display: inline-block;
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.stock-change-positive {
+    color: #04c45a;
+}
+
+.stock-change-negative {
+    color: #fd3535;
+}
+
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Pause animation on hover */
+.stock-ticker:hover .stock-ticker-content {
+    animation-play-state: paused;
+}
+
+.row {
+    margin-left: -15px;
+    margin-right: -15px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* Center row content */
+}
+
+/* Fix for card columns */
+.col-12, .col-sm-6, .col-md-4, .col-lg-3 {
+    padding: 0 15px;
+    /* Match Bootstrap padding */
+}
+
+/* Ensure top story is centered */
+.top-story {
+    margin: 0 auto;
+}
+
+/* Center sections card */
+.sections-card {
+    margin: 0 auto;
+    width: 100%;
+}
+
+#storiesContainer>.row {
+    justify-content: flex-start !important;
+}
+
+.top-story {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+/* Ensure container doesn't force centering */
+main .container {
+    display: block;
 }

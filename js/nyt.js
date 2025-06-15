@@ -12,6 +12,10 @@ class NYTNewsApp {
         this.mobileRefreshButton = document.getElementById('mobileRefreshButton');
         this.footerMobileRefreshButton = document.getElementById('footerMobileRefreshButton');
         
+        // Footer controls
+        this.footerSectionSelect = document.getElementById('footerSectionSelect');
+        this.footerRefreshButton = document.getElementById('footerRefreshButton');
+        
         // Initialize all select dropdowns with the same options
         this.initializeSelects();// Add screen size change listener
         const lgBreakpoint = window.matchMedia('(min-width: 992px)');
@@ -20,11 +24,25 @@ class NYTNewsApp {
             this.loadStories();
         });
 
-        // Event listeners
-        this.sectionSelect.addEventListener('change', () => this.loadStories());
+        // Event listeners for header controls
+        this.sectionSelect.addEventListener('change', () => {
+            this.syncSelects(this.sectionSelect.value);
+            this.loadStories();
+        });
         this.refreshButton.addEventListener('click', () => this.loadStories());
         
-        // Add refresh functionality to mobile refresh buttons with mobile
+        // Event listeners for footer controls
+        if (this.footerSectionSelect) {
+            this.footerSectionSelect.addEventListener('change', () => {
+                this.syncSelects(this.footerSectionSelect.value);
+                this.loadStories();
+            });
+        }
+        if (this.footerRefreshButton) {
+            this.footerRefreshButton.addEventListener('click', () => this.loadStories());
+        }
+        
+        // Add refresh functionality to mobile refresh buttons
         if (this.mobileRefreshButton) {
             this.mobileRefreshButton.addEventListener('click', () => this.loadStories());
         }
@@ -40,7 +58,7 @@ class NYTNewsApp {
                 if (category === 'real estate') {
                     category = 'realestate';
                 }
-                this.sectionSelect.value = category;
+                this.syncSelects(category);
                 this.loadStories();
                 window.scrollTo(0, 0);  // Scroll to top when clicking footer nav
             }
@@ -95,9 +113,8 @@ loadStories() {
             minute: '2-digit' 
         };
         return new Date(dateString).toLocaleDateString('en-US', options);
-    }    createStoryCard(story, image, isCategoryCard = false) {
-        const defaultImage = {
-            url: 'https://upload.wikimedia.org/wikipedia/commons/7/77/The_New_York_Times_logo.png',
+    }    createStoryCard(story, image, isCategoryCard = false) {        const defaultImage = {
+            url: 'img/nyt-logo.jpg',
             caption: 'The New York Times'
         };
         const imageToUse = image || defaultImage;
@@ -136,7 +153,7 @@ loadStories() {
             media.type === 'image' && 
             (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
         );const topStoryElement = document.createElement('div');
-        topStoryElement.className = 'col-12 col-sm-10 col-md-8 mb-4 top-story';
+        topStoryElement.className = 'col-12 col-sm-8 mb-4 top-story';
         topStoryElement.innerHTML = this.createStoryCard(topStory, topImage);
         mainRow.appendChild(topStoryElement);// News Sections card (visible on XL and LG screens)
         const controlsElement = document.createElement('div');
@@ -175,13 +192,18 @@ loadStories() {
         const firstCategoryRow = document.createElement('div');
         firstCategoryRow.className = 'row mb-4';
         
-        Promise.all(firstRowCategories.map(category => {
+        Promise.all(firstRowCategories.map((category, index) => {
             const url = `${this.baseUrl}/${category.toLowerCase()}.json?api-key=${this.apiKey}`;
             return fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     const categoryCol = document.createElement('div');
-                    categoryCol.className = 'col-6 col-sm-4 col-md-3';
+                    // Hide last card at small breakpoint, show at xs and md+
+                    if (index === 3) {
+                        categoryCol.className = 'col-6 col-sm-4 col-md-3 d-sm-none d-md-block d-block';
+                    } else {
+                        categoryCol.className = 'col-6 col-sm-4 col-md-3';
+                    }
 
                     const header = document.createElement('h2');
                     header.className = 'section-header mb-3';
@@ -216,13 +238,18 @@ loadStories() {
         // Second row of mini cards
         const secondRowCategories = ['Arts', 'Science', 'Technology', 'Health'];
         const secondCategoryRow = document.createElement('div');
-        secondCategoryRow.className = 'row mb-4';          Promise.all(secondRowCategories.map(category => {
+        secondCategoryRow.className = 'row mb-4';          Promise.all(secondRowCategories.map((category, index) => {
             const url = `${this.baseUrl}/${category.toLowerCase()}.json?api-key=${this.apiKey}`;
             return fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     const categoryCol = document.createElement('div');
-                    categoryCol.className = 'col-6 col-sm-4 col-md-3';
+                    // Hide last card at small breakpoint, show at xs and md+
+                    if (index === 3) {
+                        categoryCol.className = 'col-6 col-sm-4 col-md-3 d-sm-none d-md-block d-block';
+                    } else {
+                        categoryCol.className = 'col-6 col-sm-4 col-md-3';
+                    }
 
                     const header = document.createElement('h2');
                     header.className = 'section-header mb-3';
@@ -284,7 +311,8 @@ loadStories() {
         const selects = [
             document.getElementById('mobileSectionSelect'),
             document.getElementById('footerMobileSectionSelect'),
-            this.sectionSelect
+            this.sectionSelect,
+            this.footerSectionSelect
         ];
 
         selects.forEach(select => {
@@ -298,9 +326,88 @@ loadStories() {
             }
         });
     }
+
+    syncSelects(value) {
+        // Sync all select dropdowns to the same value
+        const selects = [
+            this.sectionSelect,
+            document.getElementById('mobileSectionSelect'),
+            document.getElementById('footerSectionSelect'),
+            document.getElementById('footerMobileSectionSelect')
+        ];
+        
+        selects.forEach(select => {
+            if (select) {
+                select.value = value;
+            }
+        });
+    }
 } // End of NYTNewsApp class
 
-// Initialize the app when the DOM is loaded
+// Stock Ticker functionality
+class StockTicker {
+    constructor() {
+        this.apiKey = 'd170nppr01qkv5jdqv2gd170nppr01qkv5jdqv30';
+        this.baseUrl = 'https://finnhub.io/api/v1';
+        this.tickerElement = document.getElementById('stockTicker');
+        this.symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'SPY', 'DIA', 'QQQ', 'VTI'];
+        this.initializeTicker();
+    }
+
+    async fetchStockQuote(symbol) {
+        try {
+            const response = await fetch(`${this.baseUrl}/quote?symbol=${symbol}&token=${this.apiKey}`);
+            if (!response.ok) throw new Error('API request failed');
+            const data = await response.json();
+            return { symbol, ...data };
+        } catch (error) {
+            console.error(`Error fetching ${symbol}:`, error);
+            return null;
+        }
+    }
+
+    formatPrice(price) {
+        return price.toFixed(2);
+    }
+
+    formatChange(change, changePercent) {
+        const sign = change >= 0 ? '+' : '';
+        return `${sign}${this.formatPrice(change)} (${sign}${this.formatPrice(changePercent)}%)`;
+    }
+
+    createStockElement(stockData) {
+        if (!stockData) return '';
+        
+        const change = stockData.c - stockData.pc; // Current - Previous Close
+        const changePercent = (change / stockData.pc) * 100;
+        const changeClass = change >= 0 ? 'stock-change-positive' : 'stock-change-negative';
+
+        return `<span class="stock-item">${stockData.symbol}: $${this.formatPrice(stockData.c)} <span class="${changeClass}">${this.formatChange(change, changePercent)}</span></span>`;
+    }
+
+    async initializeTicker() {
+        try {
+            // Fetch all stock data in parallel
+            const stockDataPromises = this.symbols.map(symbol => this.fetchStockQuote(symbol));
+            const stockDataResults = await Promise.all(stockDataPromises);
+            
+            // Filter out any failed requests and create the ticker content
+            const tickerContent = stockDataResults
+                .filter(data => data !== null)
+                .map(data => this.createStockElement(data))
+                .join('');
+
+            // Add the content four times to ensure smooth looping
+            this.tickerElement.innerHTML = tickerContent.repeat(4);
+        } catch (error) {
+            console.error('Error initializing stock ticker:', error);
+            this.tickerElement.innerHTML = '<span class="stock-item">Unable to load stock data</span>';
+        }
+    }
+}
+
+// Initialize both the NYT News App and Stock Ticker when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new NYTNewsApp();
+    new StockTicker();
 });

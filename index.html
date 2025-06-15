@@ -48,6 +48,11 @@
                 </select>
                 <button id="refreshButton" aria-label="Refresh stories">Refresh Stories</button>
             </div>
+            <div class="stock-ticker">
+                <div class="stock-ticker-content" id="stockTicker">
+                    <!-- Stock data will be inserted here -->
+                </div>
+            </div>
             <div class="nav-controls-mobile">
                 <select id="mobileSectionSelect" aria-label="Select news section">
                     <option value="home">Home</option>
@@ -78,7 +83,7 @@
     </div>
     <footer class="site-footer">
         <div class="container">
-            <ul class="category-list footer-nav">
+            <ul class="category-list footer-nav d-lg-none">
                 <li>Home</li>
                 <li>Arts</li>
                 <li>Business</li>
@@ -93,7 +98,25 @@
                 <li>Technology</li>
                 <li>World</li>
             </ul>
-            <div class="nav-controls-mobile">
+            <div class="footer-nav-controls d-lg-none">
+                <select id="footerSectionSelect" aria-label="Select news section">
+                    <option value="home">Home</option>
+                    <option value="arts">Arts</option>
+                    <option value="business">Business</option>
+                    <option value="dining">Dining</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="health">Health Magazine</option>
+                    <option value="opinion">National Opinion</option>
+                    <option value="politics">Politics</option>
+                    <option value="realestate">Real Estate</option>
+                    <option value="science">Science</option>
+                    <option value="sports">Sports</option>
+                    <option value="technology">Technology</option>
+                    <option value="world">World</option>
+                </select>
+                <button id="footerRefreshButton" aria-label="Refresh stories">Refresh Stories</button>
+            </div>
+            <div class="footer-nav-controls-mobile d-lg-none">
                 <select id="footerMobileSectionSelect" aria-label="Select news section">
                     <option value="home">Home</option>
                     <option value="arts">Arts</option>
