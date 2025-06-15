@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Merriweather:wght@400;700&display=swap');
+
 :root {
     --primary-color: #000000;
     --secondary-color: #ffffff;
@@ -27,8 +29,6 @@
     box-sizing: border-box;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Merriweather:wght@400;700&display=swap');
-
 html {
     background-color: var(--primary-color);
 }
@@ -56,8 +56,6 @@ body {
 
 main .container {
     background-color: var(--secondary-color);
-    padding: 2rem 15px;
-    /* Consistent padding */
     margin: 0 auto;
     /* Ensure center alignment */
     display: flex;
@@ -215,7 +213,7 @@ h1 {
     background-color: var(--primary-color);
     display: flex;
     flex-direction: column;
-    border-radius: 0;
+    border-radius: 4px 4px 0 0;
 }
 
 .sections-title {
@@ -343,6 +341,28 @@ button:hover {
     margin-bottom: 1rem;
 }
 
+/* Card image and category tag styles */
+.card-img-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.category-tag {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.5px;
+    border-top: 3px solid var(--secondary-color);
+    border-right: 3px solid var(--secondary-color);
+    border-radius: 0 4px 0 0;
+}
+
 /* Top story specific styles */
 .top-story .card-title {
     font-size: var(--title-large);
@@ -460,16 +480,9 @@ button:hover {
     color: var(--primary-color);
     padding-bottom: 0.5rem;
     margin-bottom: 0.5rem;
-    border-bottom: 2px solid var(--primary-color);
+    border-bottom: 1px solid var(--primary-color);
     text-align: left;
     cursor: pointer;
-    transition: color 0.3s ease, border-bottom-color 0.3s ease;
-}
-
-.section-header {
-    cursor: pointer;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--primary-color);
     transition: all 0.3s ease;
 }
 
@@ -510,6 +523,12 @@ button:hover {
     /* Show regular nav categories on large screens */
     .category-list {
         display: flex !important;
+        gap: 1rem;
+    }
+
+    .category-list li {
+        font-size: 0.75rem;
+        letter-spacing: 0.3px;
     }
 
     /* Show sections card on large and XL screens */
@@ -521,16 +540,8 @@ button:hover {
     .second-story {
         display: none !important;
     }
-
-    .category-list {
-        gap: 1rem;
-    }
-
-    .category-list li {
-        font-size: 0.75rem;
-        letter-spacing: 0.3px;
-    }
 }
+
 
 /* Medium devices and below (less than 992px) */
 @media (max-width: 991px) {
@@ -566,22 +577,23 @@ button:hover {
         background-color: var(--primary-color);
         padding: 0.5rem 2rem;
         border-top: 1px solid var(--secondary-color);
+    }
 
-        select, button {
-            background-color: transparent;
-            border: none;
-            color: var(--secondary-color);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 0.25rem 1rem;
-            min-width: 150px;
-            height: auto;
-        }
+    .mobile-controls select,
+    .mobile-controls button {
+        background-color: transparent;
+        border: none;
+        color: var(--secondary-color);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.25rem 1rem;
+        min-width: 150px;
+        height: auto;
+    }
 
-        select {
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
-        }
+    .mobile-controls select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
     }
 
     /* Card adjustments */
@@ -593,7 +605,7 @@ button:hover {
 }
 
 /* Medium devices (tablets, 768px to 991px) */
-@media (max-width: var(--breakpoint-lg)) {
+@media (max-width: 991px) {
 
     /* Layout */
     .container {
@@ -604,14 +616,10 @@ button:hover {
         padding: 1.25rem 0.85rem;
     }
 
-    /* Typography */
+    /* Typography and Images */
     :root {
         --title-large: 1.5rem;
         --title-medium: 1.25rem;
-    }
-
-    /* Images */
-    :root {
         --img-height-large: 300px;
         --img-height-medium: 200px;
         --img-height-small: 150px;
@@ -619,7 +627,7 @@ button:hover {
 }
 
 /* Small devices (landscape phones, 576px to 767px) */
-@media (max-width: var(--breakpoint-md)) {
+@media (max-width: 767px) {
 
     /* Typography */
     h1 {
@@ -659,7 +667,7 @@ button:hover {
 }
 
 /* Extra small devices (portrait phones, less than 576px) */
-@media (max-width: var(--breakpoint-sm)) {
+@media (max-width: 575px) {
 
     /* Typography */
     h1 {
@@ -869,11 +877,11 @@ button:hover {
 }
 
 .stock-change-positive {
-    color: #04c45a;
+    color: #0cd667;
 }
 
 .stock-change-negative {
-    color: #fd3535;
+    color: #fd5151;
 }
 
 @keyframes ticker {
@@ -909,7 +917,7 @@ button:hover {
 
 /* Ensure top story is centered */
 .top-story {
-    margin: 0 auto;
+    margin: 0;
 }
 
 /* Center sections card */
@@ -930,4 +938,8 @@ button:hover {
 /* Ensure container doesn't force centering */
 main .container {
     display: block;
+}
+
+.top-story .card-body {
+    padding-left: 0;
 }

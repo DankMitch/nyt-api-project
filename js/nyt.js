@@ -2,10 +2,9 @@
 class NYTNewsApp {
     constructor() {
         this.apiKey = 'p9y6PaYBA6c1M6hg2UCdpsPtCJaUxdge';
-        this.baseUrl = 'https://api.nytimes.com/svc/topstories/v2';
-        
-        // DOM elements
+        this.baseUrl = 'https://api.nytimes.com/svc/topstories/v2';        // DOM elements
         this.sectionSelect = document.getElementById('sectionSelect');
+        this.mobileSectionSelect = document.getElementById('mobileSectionSelect');
         this.refreshButton = document.getElementById('refreshButton');
         this.storiesContainer = document.getElementById('storiesContainer');
         this.categoryList = document.querySelector('.category-list');
@@ -14,7 +13,17 @@ class NYTNewsApp {
         
         // Footer controls
         this.footerSectionSelect = document.getElementById('footerSectionSelect');
+        this.footerMobileSectionSelect = document.getElementById('footerMobileSectionSelect');
         this.footerRefreshButton = document.getElementById('footerRefreshButton');
+        
+        console.log('Initialized elements:', {
+            sectionSelect: this.sectionSelect,
+            mobileSectionSelect: this.mobileSectionSelect,
+            refreshButton: this.refreshButton,
+            mobileRefreshButton: this.mobileRefreshButton,
+            footerRefreshButton: this.footerRefreshButton,
+            footerMobileRefreshButton: this.footerMobileRefreshButton
+        });
         
         // Initialize all select dropdowns with the same options
         this.initializeSelects();// Add screen size change listener
@@ -22,35 +31,40 @@ class NYTNewsApp {
         lgBreakpoint.addListener((e) => {
             // Reload stories when crossing the LG breakpoint
             this.loadStories();
-        });
-
-        // Event listeners for header controls
-        this.sectionSelect.addEventListener('change', () => {
-            this.syncSelects(this.sectionSelect.value);
-            this.loadStories();
-        });
-        this.refreshButton.addEventListener('click', () => this.loadStories());
+        });        // Setup event listeners for all refresh buttons and section selects
+        const buttons = [
+            this.refreshButton,
+            this.mobileRefreshButton,
+            this.footerRefreshButton,
+            this.footerMobileRefreshButton
+        ];
         
-        // Event listeners for footer controls
-        if (this.footerSectionSelect) {
-            this.footerSectionSelect.addEventListener('change', () => {
-                this.syncSelects(this.footerSectionSelect.value);
-                this.loadStories();
-            });
-        }
-        if (this.footerRefreshButton) {
-            this.footerRefreshButton.addEventListener('click', () => this.loadStories());
-        }
-        
-        // Add refresh functionality to mobile refresh buttons
-        if (this.mobileRefreshButton) {
-            this.mobileRefreshButton.addEventListener('click', () => this.loadStories());
-        }
-        if (this.footerMobileRefreshButton) {
-            this.footerMobileRefreshButton.addEventListener('click', () => this.loadStories());
-        }
-
-        // Function to handle category clicks
+        buttons.forEach(button => {
+            if (button) {
+                button.addEventListener('click', () => {
+                    console.log('Refresh clicked:', button.id);
+                    this.loadStories();
+                });
+            }
+        });        // Setup section select event listeners for all dropdowns
+        [
+            this.sectionSelect,
+            this.mobileSectionSelect,
+            this.footerSectionSelect,
+            this.footerMobileSectionSelect
+        ].forEach(select => {
+            if (select) {
+                select.addEventListener('change', (e) => {
+                    console.log('Section changed:', select.id, 'to', e.target.value);
+                    this.syncSelects(e.target.value);
+                    this.loadStories();
+                    // Scroll to top when using footer dropdowns
+                    if (select.id === 'footerSectionSelect' || select.id === 'footerMobileSectionSelect') {
+                        window.scrollTo(0, 0);
+                    }
+                });
+            }
+        });// Function to handle category clicks
         const handleCategoryClick = (e) => {
             if (e.target.tagName === 'LI') {
                 let category = e.target.textContent.toLowerCase();
@@ -63,9 +77,11 @@ class NYTNewsApp {
                 window.scrollTo(0, 0);  // Scroll to top when clicking footer nav
             }
         };
-          // Add click events to both header and footer nav
-        this.categoryList.addEventListener('click', handleCategoryClick);
-        document.querySelector('.footer-nav').addEventListener('click', handleCategoryClick);
+          
+        // Add click event to all category lists
+        document.querySelectorAll('.category-list').forEach(list => {
+            list.addEventListener('click', handleCategoryClick);
+        });
         
         // Initial load
         this.loadStories();
@@ -118,11 +134,15 @@ loadStories() {
             caption: 'The New York Times'
         };
         const imageToUse = image || defaultImage;
+        const section = story.section ? story.section.charAt(0).toUpperCase() + story.section.slice(1) : '';
         
         return `
             <div class="card">
-                <img src="${imageToUse.url}" alt="${imageToUse.caption}" class="card-img-top" onerror="this.src='${defaultImage.url}'">
-                <div class="card-body">                    <div class="small text-uppercase mb-2" style="color: var(--primary-color);">${story.section}</div>
+                <div class="card-img-wrapper">
+                    <img src="${imageToUse.url}" alt="${imageToUse.caption}" class="card-img-top" onerror="this.src='${defaultImage.url}'">
+                    ${section ? `<div class="category-tag">${section}</div>` : ''}
+                </div>
+                <div class="card-body">
                     <h3 class="card-title">
                         <a href="${story.url}" target="_blank" rel="noopener noreferrer">${story.title}</a>
                     </h3>
@@ -140,11 +160,10 @@ loadStories() {
         
         // Create main container row
         const mainRow = document.createElement('div');
-        mainRow.className = 'row mb-4';
-          // Top Stories header
+        mainRow.className = 'row mb-4';        // Top Stories header
         const topStoriesHeader = document.createElement('div');
-        topStoriesHeader.className = 'col-12 mb-3';
-        topStoriesHeader.innerHTML = '<h2>Top Stories</h2>';
+        topStoriesHeader.className = 'col-12 mb-3 px-0';
+        topStoriesHeader.innerHTML = '<h2 class="px-0">Top Stories</h2>';
         mainRow.appendChild(topStoriesHeader);
 
         // Top story (double-wide)
@@ -325,20 +344,20 @@ loadStories() {
                 });
             }
         });
-    }
-
-    syncSelects(value) {
+    }    syncSelects(value) {
+        console.log('Syncing selects to value:', value);
         // Sync all select dropdowns to the same value
         const selects = [
             this.sectionSelect,
-            document.getElementById('mobileSectionSelect'),
-            document.getElementById('footerSectionSelect'),
-            document.getElementById('footerMobileSectionSelect')
+            this.mobileSectionSelect,
+            this.footerSectionSelect,
+            this.footerMobileSectionSelect
         ];
         
         selects.forEach(select => {
             if (select) {
                 select.value = value;
+                console.log(`Set ${select.id} to ${value}`);
             }
         });
     }
