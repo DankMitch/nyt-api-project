@@ -1,8 +1,10 @@
 // NYT API functionality
 class NYTNewsApp {
     constructor() {
+        // API
         this.apiKey = 'p9y6PaYBA6c1M6hg2UCdpsPtCJaUxdge';
-        this.baseUrl = 'https://api.nytimes.com/svc/topstories/v2';        // DOM elements
+        this.baseUrl = 'https://api.nytimes.com/svc/topstories/v2';        
+        // DOM elements
         this.sectionSelect = document.getElementById('sectionSelect');
         this.mobileSectionSelect = document.getElementById('mobileSectionSelect');
         this.refreshButton = document.getElementById('refreshButton');
@@ -31,7 +33,8 @@ class NYTNewsApp {
         lgBreakpoint.addListener((e) => {
             // Reload stories when crossing the LG breakpoint
             this.loadStories();
-        });        // Setup event listeners for all refresh buttons and section selects
+        });        
+        // Setup event listeners for all refresh buttons and section selects
         const buttons = [
             this.refreshButton,
             this.mobileRefreshButton,
@@ -39,6 +42,7 @@ class NYTNewsApp {
             this.footerMobileRefreshButton
         ];
         
+        // button event listeners
         buttons.forEach(button => {
             if (button) {
                 button.addEventListener('click', () => {
@@ -46,13 +50,9 @@ class NYTNewsApp {
                     this.loadStories();
                 });
             }
-        });        // Setup section select event listeners for all dropdowns
-        [
-            this.sectionSelect,
-            this.mobileSectionSelect,
-            this.footerSectionSelect,
-            this.footerMobileSectionSelect
-        ].forEach(select => {
+        });        
+        // Setup section select event listeners for all dropdowns
+        [this.sectionSelect, this.mobileSectionSelect, this.footerSectionSelect, this.footerMobileSectionSelect].forEach(select => {
             if (select) {
                 select.addEventListener('change', (e) => {
                     console.log('Section changed:', select.id, 'to', e.target.value);
@@ -64,7 +64,8 @@ class NYTNewsApp {
                     }
                 });
             }
-        });// Function to handle category clicks
+        });
+        // Function to handle category clicks
         const handleCategoryClick = (e) => {
             if (e.target.tagName === 'LI') {
                 let category = e.target.textContent.toLowerCase();
@@ -77,15 +78,16 @@ class NYTNewsApp {
                 window.scrollTo(0, 0);  // Scroll to top when clicking footer nav
             }
         };
-          
+
         // Add click event to all category lists
         document.querySelectorAll('.category-list').forEach(list => {
             list.addEventListener('click', handleCategoryClick);
         });
         
-        // Initial load
+        // Initial load of stories
         this.loadStories();
     }    
+    // fetch stories for given category
     fetchStories(category) {
     const url = `${this.baseUrl}/${category}.json?api-key=${this.apiKey}`;
     return fetch(url)
@@ -102,6 +104,7 @@ class NYTNewsApp {
         });
 }
 
+// load and display stories for current section
 loadStories() {
     this.fetchStories(this.sectionSelect.value)
         .then(stories => {
@@ -110,6 +113,7 @@ loadStories() {
             }
             this.displayStories(stories);
         })
+        // error catch
         .catch(error => {
             this.storiesContainer.innerHTML = `
                 <div class="alert alert-info" role="alert">
@@ -129,13 +133,17 @@ loadStories() {
             minute: '2-digit' 
         };
         return new Date(dateString).toLocaleDateString('en-US', options);
-    }    createStoryCard(story, image, isCategoryCard = false) {        const defaultImage = {
+    }    
+    // generate html card for story
+    createStoryCard(story, image, isCategoryCard = false) {        const defaultImage = {
             url: 'img/nyt-logo.jpg',
             caption: 'The New York Times'
         };
+        // get proper image
         const imageToUse = image || defaultImage;
         const section = story.section ? story.section.charAt(0).toUpperCase() + story.section.slice(1) : '';
         
+        // html card template
         return `
             <div class="card">
                 <div class="card-img-wrapper">
@@ -155,26 +163,32 @@ loadStories() {
             </div>
         `;
     }    
+
     displayStories(stories) {
         this.storiesContainer.innerHTML = '';
         
         // Create main container row
         const mainRow = document.createElement('div');
-        mainRow.className = 'row mb-4';        // Top Stories header
+        // Top Stories header
+        mainRow.className = 'row mb-4';        
         const topStoriesHeader = document.createElement('div');
         topStoriesHeader.className = 'col-12 mb-3 px-0';
         topStoriesHeader.innerHTML = '<h2 class="px-0">Top Stories</h2>';
         mainRow.appendChild(topStoriesHeader);
 
-        // Top story (double-wide)
+        // Top story card
         const topStory = stories[0];
         const topImage = topStory.multimedia?.find(media => 
             media.type === 'image' && 
             (media.format === 'Super Jumbo' || media.format === 'threeByTwoSmallAt2X')
-        );const topStoryElement = document.createElement('div');
+        );
+        
+        const topStoryElement = document.createElement('div');
         topStoryElement.className = 'col-12 col-sm-8 mb-4 top-story';
         topStoryElement.innerHTML = this.createStoryCard(topStory, topImage);
         mainRow.appendChild(topStoryElement);// News Sections card (visible on XL and LG screens)
+
+        // News Sections Card
         const controlsElement = document.createElement('div');
         controlsElement.className = 'col-md-4 mb-4 d-none d-lg-block';
         controlsElement.innerHTML = `
@@ -269,7 +283,7 @@ loadStories() {
                     } else {
                         categoryCol.className = 'col-6 col-sm-4 col-md-3';
                     }
-
+                    // section tags
                     const header = document.createElement('h2');
                     header.className = 'section-header mb-3';
                     header.setAttribute('data-section', category.toLowerCase());
@@ -311,6 +325,7 @@ loadStories() {
     }
 
     initializeSelects() {
+        // dropdown options
         const options = [
             { value: 'home', text: 'Home' },
             { value: 'arts', text: 'Arts' },
