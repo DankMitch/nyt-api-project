@@ -358,10 +358,14 @@ button:hover {
 /* Top story */
 .top-story .card-title {
     font-size: var(--title-large);
+    object-fit: cover;
+    object-position: center top;
 }
 
 .top-story .card-img-top {
     height: var(--img-height-large);
+    object-fit: cover;
+    object-position: center top;
 }
 
 /* Author and date */
