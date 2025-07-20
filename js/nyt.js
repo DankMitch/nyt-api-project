@@ -29,11 +29,7 @@ class NYTNewsApp {
         
         // Initialize all select dropdowns with the same options
         this.initializeSelects();// Add screen size change listener
-        const lgBreakpoint = window.matchMedia('(min-width: 992px)');
-        lgBreakpoint.addListener((e) => {
-            // Reload stories when crossing the LG breakpoint
-            this.loadStories();
-        });        
+    
         // Setup event listeners for all refresh buttons and section selects
         const buttons = [
             this.refreshButton,
